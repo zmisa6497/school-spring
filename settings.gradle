@@ -1,2 +1,5 @@
-rootProject.name = 'SchoolZad'
-
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
