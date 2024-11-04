@@ -18,7 +18,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentController {
 
@@ -53,7 +53,7 @@ public class StudentController {
     }
 
     @NotNull
-    @GetMapping("/all")
+    @GetMapping()
     public List<Student> getAll() {
         return studentService.getAll();
     }
