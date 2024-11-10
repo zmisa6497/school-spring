@@ -18,11 +18,11 @@ tasks.named('test') {
 dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     compileOnly 'org.projectlombok:lombok:1.18.30'
-
-    implementation 'org.postgresql:postgresql:42.5.0'
+    
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Додано для Web-контролерів
+    implementation 'org.springframework.boot:spring-boot-starter-cache' // кешування
     runtimeOnly 'org.postgresql:postgresql'
 }

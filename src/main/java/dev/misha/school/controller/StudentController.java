@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,49 +17,43 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/")
+@RequestMapping("/students")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentController {
 
 
     @Autowired
-    @Qualifier("studentServiceImpl")
     StudentService studentService;
 
 
-    @NotNull
     @PostMapping("/add")
-    public void addStudent(@RequestParam String name) throws GradeSaveException {
+    public void addStudent(@RequestParam String name) {
         studentService.addStudent(name);
     }
 
-    @NotNull
-    @PostMapping("/remove")
-    public void removeStudent(@RequestParam String name) throws JournalException {
+    @DeleteMapping("/remove")
+    public void removeStudent(@RequestParam String name) {
         studentService.removeStudent(name);
     }
 
-    @NotNull
     @PostMapping("/{name}/grades")
-    public void addGrades(@PathVariable String name, @RequestParam String gradesInput) throws JournalException {
+    public void addGrades(@PathVariable String name, @RequestParam String gradesInput) {
         studentService.addGrades(name,gradesInput);
     }
 
-    @NotNull
     @GetMapping("/{name}")
-    public void getStudentByName(@PathVariable String name) throws JournalException {
+    public void getStudentByName(@PathVariable String name) {
         studentService.getStudentByName(name);
     }
 
     @NotNull
-    @GetMapping()
+    @GetMapping("/all")
     public List<Student> getAll() {
         return studentService.getAll();
     }
 
-    @NotNull
     @GetMapping("/{name}/average")
-    public void calculateAverageGrade(@PathVariable String name) throws JournalException {
+    public void calculateAverageGrade(@PathVariable String name) {
         studentService.calculateAverageGrade(name);
     }
 

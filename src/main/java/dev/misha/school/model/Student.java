@@ -1,5 +1,7 @@
 package dev.misha.school.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import dev.misha.school.repository.GradeRepository;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,19 +23,18 @@ public class Student {
     @Column(name = "student_id", nullable = false)
     Long id;
 
-    @Column(name = "studentname", nullable = false)
+    @Column(name = "student_name", nullable = false)
     String name;
 
-    @ElementCollection
-    @CollectionTable(name = "grades", joinColumns = @JoinColumn(name = "student_id"))
-    @Column(name = "grade", nullable = false)
-    List<Integer> grades = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<Grade> grades;
 
     public Student(String name) {
         this.name = name;
     }
 
-    public void addGrade(int grade){
+    public void addGrade(Grade grade){
         grades.add(grade);
     }
 }

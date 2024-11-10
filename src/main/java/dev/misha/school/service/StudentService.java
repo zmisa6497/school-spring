@@ -12,13 +12,13 @@ public interface StudentService {
 
     void removeStudent(@NotNull String name) throws JournalException;
 
-    void addGrades(@NotNull String name, String gradesInput) throws JournalException;
+    void addGrades(@NotNull String name,@NotNull String gradesInput) throws JournalException;
 
     @NotNull Student getStudentByName(@NotNull String name) throws  JournalException;
 
     List<Student> getAll() throws  JournalException;
 
-    void calculateAverageGrade(@NotNull String name) throws JournalException;
+    Double calculateAverageGrade(@NotNull String name) throws JournalException;
 
 
 }

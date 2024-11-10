@@ -3,13 +3,16 @@ package dev.misha.school.service;
 import dev.misha.school.exception.GradeSaveException;
 import dev.misha.school.exception.JournalException;
 import dev.misha.school.exception.StudentNotFoundException;
+import dev.misha.school.model.Grade;
 import dev.misha.school.model.Student;
+import dev.misha.school.repository.GradeRepository;
 import dev.misha.school.repository.StudentRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class StudentServiceImpl implements StudentService {
 
     StudentRepository studentRepository;
+    GradeRepository gradeRepository;
 
 
     @Override
@@ -36,7 +40,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void addGrades(@NotNull String name, String gradesInput) throws JournalException {
+    public void addGrades(@NotNull String name,@NotNull String gradesInput) throws JournalException {
         Student student = studentRepository.findByName(name)
                 .orElseThrow(() -> new StudentNotFoundException("Student with name %s not found", name));
 
@@ -46,7 +50,8 @@ public class StudentServiceImpl implements StudentService {
             try {
                 int grade = Integer.parseInt(gradeStr);
                 if(grade >= 0 && grade <= 12){
-                    student.addGrade(grade);
+                    Grade newGrade = new Grade(grade, student);
+                    student.addGrade(newGrade);
 
                 }
             }catch (NumberFormatException ignored){
@@ -56,39 +61,30 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Cacheable(value = "students", key = "#name")
     public @NotNull Student getStudentByName(@NotNull String name) throws JournalException {
         return studentRepository.findByName(name)
                 .orElseThrow(() -> new StudentNotFoundException("Student with name %s not found", name));
     }
 
     @Override
+    @Cacheable("students")
     public List<Student> getAll() {
-//        List<Student> students = studentRepository.findAll();
-//        students.forEach(student -> {
-//            System.out.println(student.getName() + ": ");
-//            student.getGrades().forEach(grade -> System.out.println(grade + " "));
-//            System.out.println();
-//        });
         return studentRepository.findAll();
     }
 
 
     @Override
-    public void calculateAverageGrade(@NotNull String name) throws JournalException {
+    public Double calculateAverageGrade(@NotNull String name) throws JournalException {
         Student student = studentRepository.findByName(name)
                 .orElseThrow(() -> new StudentNotFoundException("Student with name " + name + " not found"));
 
-        List<Integer> grades = student.getGrades();
-        if (grades.isEmpty()) {
+        Double averageGrade = gradeRepository.findAverageGradeByStudentId(student.getId());
+        if (averageGrade == null) {
             throw new JournalException("У студента немає оцінок для обчислення середнього бала.");
         }
-
-        double averageGrade = grades.stream()
-                .mapToInt(Integer::intValue)
-                .average()
-                .orElse(0);
+        return averageGrade;
     }
-
 }
 
 
